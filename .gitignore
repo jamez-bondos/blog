@@ -1,0 +1,11 @@
+node_modules/
+.agents/
+.issue-blog/staging/
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+*.log
+.vscode/
+.idea/

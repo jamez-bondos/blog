@@ -1,0 +1,22 @@
+{
+  "name": "jamez-bondos-issue-blog",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "prepare-article": "bun run scripts/prepare-article.ts",
+    "backup": "bun run scripts/backup-issues.ts",
+    "rss": "bun run scripts/generate-rss.ts",
+    "test": "bun test",
+    "check": "bun test"
+  },
+  "dependencies": {
+    "feed": "^6.0.0",
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.14",
+    "fast-xml-parser": "^5.10.1"
+  }
+}

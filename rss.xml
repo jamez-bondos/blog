@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+    <channel>
+        <title>Jamez 的技术博客</title>
+        <link>https://github.com/jamez-bondos/blog/issues</link>
+        <description>Jamez Bondos 的技术文章</description>
+        <lastBuildDate>Tue, 11 Aug 2026 15:04:16 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <language>zh-CN</language>
+        <item>
+            <title><![CDATA[从零实现 GPT-2 推理]]></title>
+            <link>https://github.com/jamez-bondos/blog/issues/1</link>
+            <guid isPermaLink="false">https://github.com/jamez-bondos/blog/issues/1</guid>
+            <pubDate>Mon, 10 Aug 2026 07:28:48 GMT</pubDate>
+            <description><![CDATA[大模型推理初学者指南 大语言模型（LLM）我们几乎每天都在用。但它究竟是如何回答我们的？它输出的每一个字，背后究竟发生了什么？这篇文章想和你一起回答这个问题，我们会把一段文本送进模型，跟着它走完整个内部计算，看清楚模型是怎样一步一步算出下一个 token 的。 1. 什么是推理？ 一句话说，推理（inference）就是给模型一段文本，它用训练好的权重（weights）算出下一个 token。 怎…]]></description>
+            <author>jamez-bondos</author>
+        </item>
+    </channel>
+</rss>

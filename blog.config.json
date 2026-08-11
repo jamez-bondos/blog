@@ -1,0 +1,21 @@
+{
+  "repository": {
+    "owner": "jamez-bondos",
+    "name": "blog",
+    "defaultBranch": "main"
+  },
+  "paths": {
+    "articles": "articles",
+    "code": "code",
+    "rss": "rss.xml",
+    "manifest": ".issue-blog/articles.json",
+    "staging": ".issue-blog/staging"
+  },
+  "feed": {
+    "title": "Jamez 的技术博客",
+    "description": "Jamez Bondos 的技术文章",
+    "language": "zh-CN",
+    "maxItems": 50,
+    "summaryLength": 200
+  }
+}
