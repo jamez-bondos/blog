@@ -82,22 +82,70 @@ function convertDisplayMath(markdown: string): {
   let blocksConverted = 0
   let macrosNormalized = 0
 
-  const converted = lines.map(line => {
-    if (line.trim() !== '$$') {
-      if (!inMathBlock) return line
-      return line.replace(/\\operatorname\{([^{}]+)\}/g, (_match, name: string) => {
-        macrosNormalized += 1
-        return `\\mathrm{${name}}`
-      })
+  function normalizeMacros(line: string): string {
+    return line.replace(/\\operatorname\{([^{}]+)\}/g, (_match, name: string) => {
+      macrosNormalized += 1
+      return `\\mathrm{${name}}`
+    })
+  }
+
+  function convertInlineMath(line: string): string {
+    return line.replace(/\$([^$\n]+)\$/g, (match, expression: string) => {
+      if (expression.startsWith('`') && expression.endsWith('`')) return match
+      return '$`' + expression + '`$'
+    })
+  }
+
+  const converted: string[] = []
+  let codeFence: { character: string; length: number } | undefined
+  for (const line of lines) {
+    const trimmed = line.trim()
+
+    if (codeFence) {
+      converted.push(line)
+      if (
+        trimmed.length >= codeFence.length
+        && [...trimmed].every(character => character === codeFence.character)
+      ) {
+        codeFence = undefined
+      }
+      continue
     }
+
+    if (trimmed === '$$') {
+      if (!inMathBlock) {
+        inMathBlock = true
+        blocksConverted += 1
+        converted.push('```math')
+      } else {
+        inMathBlock = false
+        converted.push('```')
+      }
+      continue
+    }
+
     if (!inMathBlock) {
-      inMathBlock = true
-      blocksConverted += 1
-      return '```math'
+      const codeFenceMatch = /^\s*(`{3,}|~{3,})/.exec(line)
+      if (codeFenceMatch) {
+        codeFence = {
+          character: codeFenceMatch[1][0],
+          length: codeFenceMatch[1].length,
+        }
+        converted.push(line)
+        continue
+      }
+
+      const singleLineDisplay = /^\s*\$\$(.+)\$\$\s*$/.exec(line)
+      if (singleLineDisplay) {
+        blocksConverted += 1
+        converted.push('```math', normalizeMacros(singleLineDisplay[1].trim()), '```')
+        continue
+      }
     }
-    inMathBlock = false
-    return '```'
-  })
+
+    const normalized = normalizeMacros(line)
+    converted.push(inMathBlock ? normalized : convertInlineMath(normalized))
+  }
 
   if (inMathBlock) throw new Error('Unclosed display math block')
   return { markdown: converted.join('\n'), blocksConverted, macrosNormalized }

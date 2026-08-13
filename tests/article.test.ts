@@ -114,6 +114,36 @@ describe('article preparation', () => {
     expect(prepared.body).not.toMatch(/^\$\$$/m)
   })
 
+  test('converts single-line display math and normalizes inline unsupported macros', () => {
+    const source = [
+      '# 单行公式',
+      '',
+      '$$S_t = \\operatorname{Diag}(x)$$',
+      '',
+      '行内公式：$\\operatorname{TopK}(s, 2)$、$x$。',
+      '',
+      '```text',
+      '保留代码中的 $value$。',
+      '```',
+    ].join('\n')
+
+    const prepared = prepareArticleContent({
+      articleId: '996-single-line-math',
+      markdown: source,
+      assetNames: [],
+      codeNames: [],
+      config,
+    })
+
+    expect(prepared.displayMathBlocksConverted).toBe(1)
+    expect(prepared.mathMacrosNormalized).toBe(2)
+    expect(prepared.body).toContain('```math\nS_t = \\mathrm{Diag}(x)\n```')
+    expect(prepared.body).toContain('：$`\\mathrm{TopK}(s, 2)`$、$`x`$。')
+    expect(prepared.body).toContain('```text\n保留代码中的 $value$。\n```')
+    expect(prepared.body).not.toContain('$$')
+    expect(prepared.body).not.toContain('\\operatorname')
+  })
+
   test('rejects an unclosed display math block', () => {
     const source = ['# 未闭合公式', '', '$$', 'x + y'].join('\n')
 
