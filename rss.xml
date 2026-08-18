@@ -4,10 +4,18 @@
         <title>Jamez 的技术博客</title>
         <link>https://github.com/jamez-bondos/blog/issues</link>
         <description>Jamez Bondos 的技术文章</description>
-        <lastBuildDate>Tue, 11 Aug 2026 15:04:16 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 18 Aug 2026 08:51:08 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-CN</language>
+        <item>
+            <title><![CDATA[Kimi K3 学习笔记：一个 3T 级模型的三项核心设计]]></title>
+            <link>https://github.com/jamez-bondos/blog/issues/2</link>
+            <guid isPermaLink="false">https://github.com/jamez-bondos/blog/issues/2</guid>
+            <pubDate>Tue, 18 Aug 2026 08:51:08 GMT</pubDate>
+            <description><![CDATA[2026 年 7 月 16 日，月之暗面（Moonshot AI）发布了 Kimi K3。它是一个原生多模态模型，官方主打长程编程、知识工作和复杂推理。在 Artificial Analysis 7 月 17 日公布的 Intelligence Index 排名中，K3 排名第三，仅次于 Claude Fable 5 和 GPT-5.6 Sol。7 月 27 日，月之暗面又放出了完整模型权重，K3…]]></description>
+            <author>jamez-bondos</author>
+        </item>
         <item>
             <title><![CDATA[从零实现 GPT-2 推理]]></title>
             <link>https://github.com/jamez-bondos/blog/issues/1</link>

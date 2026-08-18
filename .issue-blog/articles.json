@@ -4,6 +4,10 @@
     "001-beginners-guide-to-llm-inference": {
       "issue": 1,
       "url": "https://github.com/jamez-bondos/blog/issues/1"
+    },
+    "101-kimi-k3": {
+      "issue": 2,
+      "url": "https://github.com/jamez-bondos/blog/issues/2"
     }
   }
 }
