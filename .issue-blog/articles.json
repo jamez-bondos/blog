@@ -8,6 +8,10 @@
     "101-kimi-k3": {
       "issue": 2,
       "url": "https://github.com/jamez-bondos/blog/issues/2"
+    },
+    "102-qwen38-flash-next": {
+      "issue": 3,
+      "url": "https://github.com/jamez-bondos/blog/issues/3"
     }
   }
 }

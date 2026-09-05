@@ -4,10 +4,18 @@
         <title>Jamez 的技术博客</title>
         <link>https://github.com/jamez-bondos/blog/issues</link>
         <description>Jamez Bondos 的技术文章</description>
-        <lastBuildDate>Tue, 18 Aug 2026 08:51:08 GMT</lastBuildDate>
+        <lastBuildDate>Sat, 05 Sep 2026 05:18:33 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-CN</language>
+        <item>
+            <title><![CDATA[Qwen3.8-Flash-Next 架构学习笔记]]></title>
+            <link>https://github.com/jamez-bondos/blog/issues/3</link>
+            <guid isPermaLink="false">https://github.com/jamez-bondos/blog/issues/3</guid>
+            <pubDate>Sat, 05 Sep 2026 05:18:33 GMT</pubDate>
+            <description><![CDATA[2026 年 8 月 26 日，通义千问团队发布了 Qwen3.8-Flash-Next，作为下一代 Qwen4 架构的公开预览。它延续了 Qwen3-Next 的做法，在完整系列发布之前先公开新架构，让社区提前熟悉这套设计。 此前 Qwen3.8-27B 发布时，我对它的能力提升印象很深，也留意到模型架构仍然沿用 Qwen3.5 的设计。新模型一款接着一款发布，我也期待看到架构上有些新的变化。Q…]]></description>
+            <author>jamez-bondos</author>
+        </item>
         <item>
             <title><![CDATA[Kimi K3 学习笔记：一个 3T 级模型的三项核心设计]]></title>
             <link>https://github.com/jamez-bondos/blog/issues/2</link>
