@@ -6,7 +6,7 @@ url: 'https://github.com/jamez-bondos/blog/issues/3'
 state: open
 author: jamez-bondos
 created_at: '2026-09-05T05:18:33Z'
-updated_at: '2026-09-05T05:18:33Z'
+updated_at: '2026-09-07T17:19:46Z'
 labels:
   - '2026'
   - LLM
@@ -290,7 +290,7 @@ GR 的四条残差分支从同一份 token embedding 开始。模型得到这份
 
 *图 5　(a) 为标准单路残差，(b) 为 Hyper-Connections 的读取、分支混合与写回，(c) 为 Gated Residual 的逐通道读取与逐分支写回。*
 
-图 5(c) 画出了 GR 的主数据流。底部的 $`R_1^{\ell},\ldots,R_4^{\ell}`$ 是四条分支在这一子层之前持有的状态。这些状态先分别乘以逐通道读取门 $`G_i`$，四路结果由 GR Read 取平均，再送入子层 $`F`$。子层输出经过 GR Write，用四个写入系数 $`s_i`$ 分别缩放，再加回各条分支，得到顶部的 $`R_1^{\ell+1},\ldots,R_4^{\ell+1}`$。
+图 5(c) 画出了 GR 的主数据流。图中的 $`G`$ 汇集四组逐通道读取门 $`G_i`$；$`s`$ 汇集四个逐分支写入系数 $`s_i`$。底部的 $`R_1^{\ell},\ldots,R_4^{\ell}`$ 是四条分支在这一子层之前持有的状态。这些状态先分别乘以逐通道读取门 $`G_i`$，四路结果由 GR Read 取平均，再送入子层 $`F`$。子层输出经过 GR Write，用四个写入系数 $`s_i`$ 分别缩放，再加回各条分支，得到顶部的 $`R_1^{\ell+1},\ldots,R_4^{\ell+1}`$。
 
 这张图省略了各条分支的归一化，以及 $`G_i`$ 和 $`s_i`$ 的生成过程。两组参数都会随 token 位置变化，由该位置归一化后的四路状态共同预测。图中从子层 $`F`$ 指向 GR Write 的箭头表示对子层输出进行缩放和写回，写入系数 $`s_i`$ 在子层计算前已经算出。
 
@@ -355,7 +355,7 @@ x^\ell=H_{\mathrm{mix}}^{\mathsf T}R^\ell
 R^{\ell+1}=H_{\mathrm{res}}R^\ell+H_{\mathrm{combine}}{y^\ell}^{\mathsf T}
 ```
 
-$`H_{\mathrm{mix}}`$ 和 $`H_{\mathrm{combine}}`$ 是 $`n_r`$ 维向量，$`H_{\mathrm{res}}`$ 是 $`n_r\times n_r`$ 矩阵。三个算子都包含一个静态项和一个从当前残差状态预测的动态项。关闭动态项并采用对应的静态设置，HC 可以恢复前面的简化 AltUp。
+$`H_{\mathrm{mix}}`$ 和 $`H_{\mathrm{combine}}`$ 是 $`n_r`$ 维向量，图 5(b) 的绿色框分别将它们简记为 $`m`$ 和 $`c`$；$`H_{\mathrm{res}}`$ 是 $`n_r\times n_r`$ 矩阵。三个算子都包含一个静态项和一个从当前残差状态预测的动态项。关闭动态项并采用对应的静态设置，HC 可以恢复前面的简化 AltUp。
 
 动态算子解决了 AltUp 对所有 token 使用同一套读写参数的问题。$`H_{\mathrm{res}}`$ 也让分支能够直接交换信息，同时改变了标准残差的恒等路径。把许多层展开以后，浅层信号前面会出现一串 $`H_{\mathrm{res}}`$ 连乘。矩阵缺少约束时，连乘可能让前向信号和梯度不断放大或缩小。
 
@@ -387,7 +387,7 @@ GR 保留四条残差分支，让读写随当前状态变化，将读取细化�
 
 ![图 6　GR 的完整残差流](./assets/figure-6-gated-residual-layer-flow.png)
 
-*图 6　GR 的完整残差流。Embedding 初始化四条残差分支，中间展开一个 Transformer 层，顶部的 GR Read 合成送往输出端的状态。*
+*图 6　GR 的完整残差流。Embedding 初始化四条残差分支，中间展开一个 Decoder 层，顶部的 Final GR Read 合成最终状态，再送入 LM head。*
 
 图 6 底部的 Embedding 将同一份 token embedding 复制到四条分支，因此四路初始状态相同。实际模型会根据当前残差状态动态生成 $`G_i`$ 和 $`s_i`$。为了考察四条分支完全同步的情况，这里作一个理想化设定，令读取门 $`G_i`$ 的所有通道和写入系数 $`s_i`$ 都等于 1。把四条分支的共同状态记作 $`R`$。此时读取不再区分分支，GR Read 取平均后得到与单路残差相同的输入，子层产生输出 $`y`$。写回结果为
 
