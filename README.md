@@ -6,6 +6,9 @@ LLM、推理、Agent，以及一些碎碎念。
 
 ## 文章
 
+- [GLM-5.3-Flash 架构学习笔记](https://github.com/jamez-bondos/blog/issues/4)<br>
+  从 IndexPool 稀疏 MLA 到四路 mHC，梳理 GLM-5.3-Flash 的关键架构与计算路径。
+
 - [Qwen3.8-Flash-Next 架构学习笔记](https://github.com/jamez-bondos/blog/issues/3)<br>
   从混合注意力、四路 Gated Residual 和 N-gram embedding 三个方向，拆解 Qwen4 预览架构。
 

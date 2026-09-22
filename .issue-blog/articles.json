@@ -12,6 +12,10 @@
     "102-qwen38-flash-next": {
       "issue": 3,
       "url": "https://github.com/jamez-bondos/blog/issues/3"
+    },
+    "103-glm53-flash": {
+      "issue": 4,
+      "url": "https://github.com/jamez-bondos/blog/issues/4"
     }
   }
 }

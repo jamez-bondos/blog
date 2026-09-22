@@ -4,10 +4,18 @@
         <title>Jamez 的技术博客</title>
         <link>https://github.com/jamez-bondos/blog/issues</link>
         <description>Jamez Bondos 的技术文章</description>
-        <lastBuildDate>Mon, 07 Sep 2026 17:19:46 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 22 Sep 2026 11:26:02 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <language>zh-CN</language>
+        <item>
+            <title><![CDATA[GLM-5.3-Flash 架构学习笔记]]></title>
+            <link>https://github.com/jamez-bondos/blog/issues/4</link>
+            <guid isPermaLink="false">https://github.com/jamez-bondos/blog/issues/4</guid>
+            <pubDate>Tue, 22 Sep 2026 11:26:02 GMT</pubDate>
+            <description><![CDATA[GLM 一直给我扎实、好用的印象，我也保持着订阅，持续关注它的更新。GLM-5.3 与 GLM-5.2 使用相同的基础模型，提升主要来自后训练。这次的 GLM-5.3-Flash 则采用了新的架构设计，很值得学习。 在之前的学习中，我已经接触过混合注意力和多路残差。GLM-5.3-Flash 对这些设计的运用又有所不同，也给了我进一步深入学习的机会。这次，我想更仔细地理解混合注意力中稀疏 MLA …]]></description>
+            <author>jamez-bondos</author>
+        </item>
         <item>
             <title><![CDATA[Qwen3.8-Flash-Next 架构学习笔记]]></title>
             <link>https://github.com/jamez-bondos/blog/issues/3</link>
