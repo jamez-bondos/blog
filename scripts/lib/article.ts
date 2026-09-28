@@ -14,6 +14,8 @@ export interface PreparedArticle {
   imageFiles: string[]
   codeFiles: string[]
   codeLinkReplaced: boolean
+  crossArticleLinksRewritten: number
+  crossArticleTargets: string[]
   tableOfContentsRemoved: boolean
   displayMathBlocksConverted: number
   mathMacrosNormalized: number
@@ -25,6 +27,7 @@ export interface PrepareArticleInput {
   assetNames: string[]
   codeNames: string[]
   config: BlogConfig
+  articleUrls?: Record<string, string>
 }
 
 export function articleNumber(articleId: string): string {
@@ -151,6 +154,78 @@ function convertDisplayMath(markdown: string): {
   return { markdown: converted.join('\n'), blocksConverted, macrosNormalized }
 }
 
+function rewriteCrossArticleLinks(
+  markdown: string,
+  articleUrls: Record<string, string>,
+  config: BlogConfig,
+): {
+  markdown: string
+  linksRewritten: number
+  targetArticleIds: string[]
+} {
+  const expectedUrlPrefix = `https://github.com/${config.repository.owner}/${config.repository.name}/issues/`
+  const linkPattern = /(?<!!)\[([^\]\n]+)\]\(\.\.\/(\d{3}(?:-[a-z0-9]+)+)\/final\.md(#[^)]+)?\)/g
+  const targetArticleIds = new Set<string>()
+  let linksRewritten = 0
+  let codeFence: { character: string; length: number } | undefined
+
+  const rewritten = markdown.split('\n').map(line => {
+    const trimmed = line.trim()
+    if (codeFence) {
+      if (
+        trimmed.length >= codeFence.length
+        && [...trimmed].every(character => character === codeFence?.character)
+      ) {
+        codeFence = undefined
+      }
+      return line
+    }
+
+    const codeFenceMatch = /^\s*(`{3,}|~{3,})/.exec(line)
+    if (codeFenceMatch) {
+      codeFence = {
+        character: codeFenceMatch[1][0],
+        length: codeFenceMatch[1].length,
+      }
+      return line
+    }
+
+    return line.replace(
+      linkPattern,
+      (_match, label: string, targetArticleId: string, fragment: string | undefined) => {
+        if (fragment) {
+          throw new Error(
+            `Cross-article section links are not supported: ${targetArticleId}${fragment}`,
+          )
+        }
+
+        const issueUrl = articleUrls[targetArticleId]
+        if (!issueUrl) {
+          throw new Error(`Cannot resolve cross-article link: ${targetArticleId} is not registered`)
+        }
+        if (
+          !issueUrl.startsWith(expectedUrlPrefix)
+          || !/^\d+$/.test(issueUrl.slice(expectedUrlPrefix.length))
+        ) {
+          throw new Error(
+            `Cross-article link for ${targetArticleId} does not belong to ${config.repository.owner}/${config.repository.name}`,
+          )
+        }
+
+        linksRewritten += 1
+        targetArticleIds.add(targetArticleId)
+        return `[${label}](${issueUrl})`
+      },
+    )
+  })
+
+  return {
+    markdown: rewritten.join('\n'),
+    linksRewritten,
+    targetArticleIds: [...targetArticleIds],
+  }
+}
+
 export function prepareArticleContent(input: PrepareArticleInput): PreparedArticle {
   const { articleId, markdown, config } = input
   if (!ARTICLE_ID_PATTERN.test(articleId)) {
@@ -175,6 +250,12 @@ export function prepareArticleContent(input: PrepareArticleInput): PreparedArtic
   body = toc.markdown
   const math = convertDisplayMath(body)
   body = math.markdown
+  const crossArticleLinks = rewriteCrossArticleLinks(
+    body,
+    input.articleUrls ?? {},
+    config,
+  )
+  body = crossArticleLinks.markdown
 
   const assets = new Set(input.assetNames)
   const referencedImages: string[] = []
@@ -211,6 +292,8 @@ export function prepareArticleContent(input: PrepareArticleInput): PreparedArtic
     imageFiles: [...new Set(referencedImages)],
     codeFiles,
     codeLinkReplaced,
+    crossArticleLinksRewritten: crossArticleLinks.linksRewritten,
+    crossArticleTargets: crossArticleLinks.targetArticleIds,
     tableOfContentsRemoved: toc.removed,
     displayMathBlocksConverted: math.blocksConverted,
     mathMacrosNormalized: math.macrosNormalized,
@@ -237,12 +320,16 @@ export async function prepareArticleFromFiles(options: {
   const markdown = await fs.readFile(options.sourcePath, 'utf8')
   const assetNames = await listFiles(options.assetsDirectory, '.png')
   const codeNames = await listFiles(options.codeDirectory, '.py')
+  const manifest = await readManifest(path.join(options.projectRoot, options.config.paths.manifest))
   const prepared = prepareArticleContent({
     articleId: options.articleId,
     markdown,
     assetNames,
     codeNames,
     config: options.config,
+    articleUrls: Object.fromEntries(
+      Object.entries(manifest.articles).map(([id, record]) => [id, record.url]),
+    ),
   })
 
   if (options.dryRun) return prepared
@@ -279,6 +366,8 @@ export async function prepareArticleFromFiles(options: {
       imageFiles: prepared.imageFiles,
       codeFiles: prepared.codeFiles,
       codeLinkReplaced: prepared.codeLinkReplaced,
+      crossArticleLinksRewritten: prepared.crossArticleLinksRewritten,
+      crossArticleTargets: prepared.crossArticleTargets,
       tableOfContentsRemoved: prepared.tableOfContentsRemoved,
       displayMathBlocksConverted: prepared.displayMathBlocksConverted,
       mathMacrosNormalized: prepared.mathMacrosNormalized,

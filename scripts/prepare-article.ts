@@ -66,6 +66,7 @@ async function main(): Promise<void> {
   console.log(`Prepared: ${prepared.title}`)
   console.log(`Images: ${prepared.imageFiles.length}`)
   console.log(`Code files: ${prepared.codeFiles.length}`)
+  console.log(`Cross-article links: ${prepared.crossArticleLinksRewritten}`)
   console.log(`Staging body: ${path.join(config.paths.staging, `${articleId}.md`)}`)
 }
 

@@ -54,6 +54,83 @@ describe('article preparation', () => {
     expect(updated.articles['001-beginners-guide-to-llm-inference'].issue).toBe(1)
   })
 
+  test('rewrites cross-article source links with target-repository Issue URLs', () => {
+    const source = [
+      '# 测试跨文章链接',
+      '',
+      '[Kimi K3](../101-kimi-k3/final.md)',
+      '[Qwen3.8](../102-qwen38-flash-next/final.md)',
+      '[再次引用 Kimi K3](../101-kimi-k3/final.md)',
+      '[外部链接](https://example.com/article)',
+      '',
+      '```markdown',
+      '[代码示例](../101-kimi-k3/final.md)',
+      '```',
+    ].join('\n')
+
+    const prepared = prepareArticleContent({
+      articleId: '999-cross-article-links',
+      markdown: source,
+      assetNames: [],
+      codeNames: [],
+      config,
+      articleUrls: {
+        '101-kimi-k3': 'https://github.com/jamez-bondos/blog/issues/2',
+        '102-qwen38-flash-next': 'https://github.com/jamez-bondos/blog/issues/3',
+      },
+    })
+
+    expect(prepared.crossArticleLinksRewritten).toBe(3)
+    expect(prepared.crossArticleTargets).toEqual(['101-kimi-k3', '102-qwen38-flash-next'])
+    expect(prepared.body.match(/https:\/\/github\.com\/jamez-bondos\/blog\/issues\/2/g)).toHaveLength(2)
+    expect(prepared.body).toContain('https://github.com/jamez-bondos/blog/issues/3')
+    expect(prepared.body).toContain('[外部链接](https://example.com/article)')
+    expect(prepared.body).toContain('```markdown\n[代码示例](../101-kimi-k3/final.md)\n```')
+  })
+
+  test('uses Preview Issue URLs when preparing for the Preview repository', () => {
+    const prepared = prepareArticleContent({
+      articleId: '999-preview-links',
+      markdown: '# Preview\n\n[Kimi K3](../101-kimi-k3/final.md)',
+      assetNames: [],
+      codeNames: [],
+      config: {
+        ...config,
+        repository: { ...config.repository, name: 'blog-preview' },
+      },
+      articleUrls: {
+        '101-kimi-k3': 'https://github.com/jamez-bondos/blog-preview/issues/2',
+      },
+    })
+
+    expect(prepared.crossArticleLinksRewritten).toBe(1)
+    expect(prepared.body).toContain('https://github.com/jamez-bondos/blog-preview/issues/2')
+  })
+
+  test('rejects cross-article links without a target-repository mapping', () => {
+    expect(() => prepareArticleContent({
+      articleId: '999-missing-cross-article',
+      markdown: '# 缺少映射\n\n[尚未发布](../105-unpublished/final.md)',
+      assetNames: [],
+      codeNames: [],
+      config,
+      articleUrls: {},
+    })).toThrow('Cannot resolve cross-article link: 105-unpublished is not registered')
+  })
+
+  test('rejects cross-article links mapped to another repository', () => {
+    expect(() => prepareArticleContent({
+      articleId: '999-wrong-repository',
+      markdown: '# 错误仓库\n\n[Kimi K3](../101-kimi-k3/final.md)',
+      assetNames: [],
+      codeNames: [],
+      config,
+      articleUrls: {
+        '101-kimi-k3': 'https://github.com/jamez-bondos/blog-preview/issues/2',
+      },
+    })).toThrow('does not belong to jamez-bondos/blog')
+  })
+
   test('removes a linked table of contents without removing article lists', () => {
     const source = [
       '# 测试文章',
