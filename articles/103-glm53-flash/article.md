@@ -6,7 +6,7 @@ url: 'https://github.com/jamez-bondos/blog/issues/4'
 state: open
 author: jamez-bondos
 created_at: '2026-09-22T11:26:02Z'
-updated_at: '2026-09-22T11:26:02Z'
+updated_at: '2026-09-28T06:45:11Z'
 labels:
   - '2026'
   - LLM
@@ -558,7 +558,13 @@ $`\sigma`$ 表示逐元素应用 sigmoid。读取的四个中间值分别经过 
 
 **混合矩阵的归一化。** Sinkhorn 交替进行行归一化和列归一化。行归一化将每个数除以所在行的和，使行和接近 1；列归一化对列作相同处理。调整列时可能改变刚得到的行和，因此需要反复交替。
 
-按本文 $`B_\ell`$ 的行列方向表示，GLM-5.3-Flash 先对 $`\tilde B_\ell`$ 按列做 softmax，再逐元素加上小常数，得到正值矩阵。随后进行一次行归一化，再执行 19 次“列归一化、行归一化”，对应配置中的 20 轮迭代。前面公式中的 $`\mathrm{Sinkhorn}`$ 概括了这一完整过程。
+![图 6　Sinkhorn 交替归一化](./assets/figure-6-sinkhorn-iterations.png)
+
+*图 6　Sinkhorn 交替归一化。四栏依次为初始矩阵及第一、第二、第三轮迭代，右侧与底部方块分别表示行和、列和。图中每轮先进行行归一化，再进行列归一化，后三栏展示各轮完成后的结果。$`7\times7`$ 矩阵为教学示例。参考 [Ranking via Sinkhorn Propagation](https://lips.cs.princeton.edu/pdfs/adams2011sinkhorn.pdf) Figure 1。*
+
+图 6 中，同一栏内的数值越大，方块越大、颜色越浅。随着迭代进行，右侧与底部表示行和、列和的方块趋于一致，内部元素仍可大小不同。各栏的显示尺度不同，读图时应关注同一栏中行和、列和是否接近，不能用跨栏方块的大小判断数值增减。
+
+GLM-5.3-Flash 的混合矩阵为 $`4\times4`$，实际计算按本文 $`B_\ell`$ 的行列方向表示时，先对 $`\tilde B_\ell`$ 按列做 softmax，再逐元素加上小常数，得到正值矩阵。随后进行一次行归一化，再执行 19 次“列归一化、行归一化”，对应配置中的 20 轮迭代。前面公式中的 $`\mathrm{Sinkhorn}`$ 概括了这一完整过程。
 
 归一化分母中也加入小常数。由于迭代次数有限，并受到小常数与浮点误差的影响，最终的行和、列和只能近似为 1。
 
